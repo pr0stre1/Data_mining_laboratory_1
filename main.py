@@ -20,6 +20,10 @@ word_ham_count = []
 sentences_spam = []
 # List of each sentence in category ham
 sentences_ham = []
+# Count of all words in category spam
+count_of_all_words_spam = 0
+# Count of all words in category ham
+count_of_all_words_ham = 0
 # List of numbers to delete
 numbers = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}
 # List of special symbols to delete
@@ -142,7 +146,7 @@ def average_length_of_sentences(t_list):
     return value/count
 
 
-# Reading SCV file
+# Reading CSV file
 with open('sms-spam-corpus.csv', "r", newline='') as csvFileRead:
     next(csvFileRead)
     reader = csv.reader(csvFileRead)
@@ -192,31 +196,36 @@ with open('sms-spam-corpus.csv', "r", newline='') as csvFileRead:
     tuples = zip(*reversed_lists)
     word_ham_count, words_ham = [list(tuple) for tuple in tuples]
 
-    print("Top 20 most frequent words in category spam:")
+    """print("Top 20 most frequent words in category spam:")
     for word in range(0, 20):
         print(f'Word: {words_spam[word]}. Times: {word_spam_count[word]}')
     # print(most_frequent_words_spam)
     print("Top 20 most frequent words in category ham:")
     for word in range(0, 20):
-        print(f'Word: {words_ham[word]}. Times: {word_ham_count[word]}')
+        print(f'Word: {words_ham[word]}. Times: {word_ham_count[word]}')"""
     # print(most_frequent_words_ham)
-# Writing SCV files for category spam
+# Writing CSV files for category spam
 with open('output/category-spam-words-frequencies.csv', "w", newline='') as csvFileWrite:
     writer = csv.writer(csvFileWrite)
     for word in range(0, len(words_spam)):
         writer.writerow([words_spam[word], word_spam_count[word]])
-# Writing SCV files for category ham
+# Writing CSV files for category ham
 with open('output/category-ham-words-frequencies.csv', "w", newline='') as csvFileWrite:
     writer = csv.writer(csvFileWrite)
     for word in range(0, len(words_ham)):
         writer.writerow([words_ham[word], word_ham_count[word]])
-
+# Count of all words in each category
+for word in range (0, len(word_ham_count)):
+    count_of_all_words_ham = count_of_all_words_ham + word_ham_count[word]
+for word in range (0, len(word_spam_count)):
+    count_of_all_words_spam = count_of_all_words_spam + word_spam_count[word]
 # Find length of each word for categories
 lengths_of_words_ham = length_of_words(words_ham)
 lengths_of_words_spam = length_of_words(words_spam)
 # Bins to show on the hist
 # bins = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 # Hist settings
+# length-of-words-histogram graphic
 plt.subplots()
 plt.style.use('fivethirtyeight')
 plt.figure(figsize=(15, 10))
@@ -237,6 +246,7 @@ plt.title('Length of words histogram')
 plt.savefig('output/length-of-words-histogram.png')
 # Clear plot
 plt.clf()
+# length-of-sentences-histogram graphic
 plt.figure(figsize=(15, 10))
 # Find length of each sentence for categories
 length_of_sentences_ham = length_of_sentences(sentences_ham)
@@ -258,6 +268,7 @@ plt.xlabel('Length of sentences')
 plt.title('Length of sentences histogram')
 # Saving hist to file
 plt.savefig('output/length-of-sentences-histogram.png')
+# 20-most frequent-words-ham graphic
 plt.clf()
 plt.figure(figsize=(15, 10))
 bar_ham_top_20 = []
@@ -272,6 +283,7 @@ plt.ylabel('Count')
 plt.bar(y_pos, count_ham_top_20)
 plt.xticks(y_pos, bar_ham_top_20)
 plt.savefig('output/20-most-frequent-words-ham.png')
+# 20-most-frequent-words-spam graphic
 plt.clf()
 plt.figure(figsize=(15, 10))
 bar_spam_top_20 = []
@@ -286,3 +298,33 @@ plt.ylabel('Count')
 plt.bar(y_pos, count_spam_top_20)
 plt.xticks(y_pos, bar_spam_top_20)
 plt.savefig('output/20-most-frequent-words-spam.png')
+# frequency analyze spam
+plt.clf()
+plt.figure(figsize=(15, 10))
+bar_spam_top_20 = []
+count_spam_top_20 = []
+for word in range(0, 20):
+    bar_spam_top_20.append(words_spam[word])
+    count_spam_top_20.append(word_spam_count[word]/count_of_all_words_spam)
+y_pos = np.arange(len(count_spam_top_20))
+plt.title('Frequency analyze for category spam')
+plt.xlabel('Words')
+plt.ylabel('Frequency')
+plt.bar(y_pos, count_spam_top_20)
+plt.xticks(y_pos, bar_spam_top_20)
+plt.savefig('output/frequency-analyze-spam.png')
+# frequency analyze ham
+plt.clf()
+plt.figure(figsize=(15, 10))
+bar_ham_top_20 = []
+count_ham_top_20 = []
+for word in range(0, 20):
+    bar_ham_top_20.append(words_ham[word])
+    count_ham_top_20.append(word_ham_count[word]/count_of_all_words_ham)
+y_pos = np.arange(len(count_ham_top_20))
+plt.title('Frequency analyze for category ham')
+plt.xlabel('Words')
+plt.ylabel('Frequency')
+plt.bar(y_pos, count_ham_top_20)
+plt.xticks(y_pos, bar_ham_top_20)
+plt.savefig('output/frequency-analyze-ham.png')

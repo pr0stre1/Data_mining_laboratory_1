@@ -88,11 +88,11 @@ def frequency_of_words(text):
 
 
 # Finding length of each word in the list
-def length_of_words(t_list):
+def length_of_words(t_list, count_of_all_words):
     words_lengths = []
 
     for w in range(0, len(t_list)):
-        words_lengths.append(len(t_list[w]))
+        words_lengths.append(len(t_list[w])/count_of_all_words)
 
     return words_lengths
 
@@ -220,8 +220,8 @@ for word in range (0, len(word_ham_count)):
 for word in range (0, len(word_spam_count)):
     count_of_all_words_spam = count_of_all_words_spam + word_spam_count[word]
 # Find length of each word for categories
-lengths_of_words_ham = length_of_words(words_ham)
-lengths_of_words_spam = length_of_words(words_spam)
+lengths_of_words_ham = length_of_words(words_ham, count_of_all_words_ham)
+lengths_of_words_spam = length_of_words(words_spam, count_of_all_words_spam)
 # Bins to show on the hist
 # bins = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 # Hist settings
@@ -233,11 +233,11 @@ plt.figure(figsize=(15, 10))
 plt.hist(lengths_of_words_ham,
          bins=range(0, 20),
          edgecolor='black',
-         label='Ham (avg: ' + str("%.3f" % average_length_of_words(words_ham)) + ')')
+         label='Ham (avg: ' + str("%.3f" % average_length_of_words(words_ham)/count_of_all_words_ham) + ')')
 plt.hist(lengths_of_words_spam,
          bins=range(0, 20),
          edgecolor='black',
-         label='Spam (avg: ' + str("%.3f" % average_length_of_words(words_spam)) + ')')
+         label='Spam (avg: ' + str("%.3f" % average_length_of_words(words_spam)/count_of_all_words_spam) + ')')
 plt.legend(loc='best')
 plt.ylabel('Count of words')
 plt.xlabel('Length of words')
